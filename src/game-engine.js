@@ -1,10 +1,17 @@
 import { findFragmentIndex, normalizeWord } from "./lexicon.js";
 
 export const DIFFICULTIES = {
-  facile: { label: "Facile", min: 30, max: Infinity },
-  standard: { label: "Standard", min: 12, max: 29 },
-  expert: { label: "Expert", min: 4, max: 11 }
+  facile: { label: "Facile", min: 80 },
+  standard: { label: "Standard", min: 25 },
+  expert: { label: "Expert", min: 8 }
 };
+
+// Keep the game playable: common French fragments first, rare corpus noise never.
+export const PREFERRED_FRAGMENTS = [
+  "ier", "par", "ent", "ion", "eur", "our", "que", "est", "ant", "ait", "ais",
+  "ain", "ine", "age", "eau", "ter", "oir", "ons", "aux", "ies", "era", "ers",
+  "pro", "con", "com", "tra", "pla", "mar", "cha", "cor", "car", "ven", "pre", "des"
+];
 
 const randomItem = (items, random = Math.random) => items[Math.floor(random() * items.length)];
 
@@ -132,16 +139,16 @@ export class GameEngine {
 
   chooseSequence() {
     const difficulty = DIFFICULTIES[this.settings.difficulty];
-    const eligible = [];
-    for (const [fragment, words] of this.lexicon.byFragment) {
-      if (words.length < difficulty.min || words.length > difficulty.max) continue;
-      if (words.some((word) => !this.usedWords.has(word))) eligible.push(fragment);
-    }
-    const fallback = [...this.lexicon.byFragment.keys()].filter((fragment) => {
+    const available = (fragment) => {
       const words = this.lexicon.byFragment.get(fragment);
-      return words.some((word) => !this.usedWords.has(word));
+      return words?.some((word) => !this.usedWords.has(word));
+    };
+    const eligible = PREFERRED_FRAGMENTS.filter((fragment) => {
+      const words = this.lexicon.byFragment.get(fragment);
+      return words && words.length >= difficulty.min && available(fragment);
     });
-    return randomItem(eligible.length ? eligible : fallback, this.random) ?? "ou";
+    const fallback = PREFERRED_FRAGMENTS.filter(available);
+    return randomItem(eligible.length ? eligible : fallback, this.random) ?? "ier";
   }
 
   startNextTurn() {

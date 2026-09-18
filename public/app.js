@@ -72,6 +72,8 @@ function handleMessage(message) {
     localStorage.setItem(storedTokenKey, sessionToken);
     history.replaceState(null, "", `?room=${roomCode}`);
     setHomeFeedback("");
+    toast.classList.remove("show");
+    toast.textContent = "";
     return;
   }
   if (message.type === "state") {
@@ -160,8 +162,8 @@ function renderPlayerCard(player, index, total) {
   const card = document.createElement("article");
   card.className = `player-card${player.id === state.activePlayerId ? " active" : ""}${player.spectator ? " spectator" : ""}${player.connected ? "" : " disconnected"}`;
   const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
-  const x = 50 + Math.cos(angle) * 39;
-  const y = 50 + Math.sin(angle) * 37;
+  const x = 50 + Math.cos(angle) * 42;
+  const y = 50 + Math.sin(angle) * 42;
   card.style.left = `${x}%`;
   card.style.top = `${y}%`;
   const avatar = document.createElement("div");
@@ -186,8 +188,8 @@ function renderPlayerCard(player, index, total) {
   if (player.lastWord) appendHighlighted(lastWord, player.lastWord.display, player.lastWord.sequence);
   else lastWord.textContent = "Aucun mot pour l’instant";
   const live = document.createElement("div");
-  live.className = "live-typing";
   const typing = state.liveInput?.playerId === player.id ? state.liveInput.text : "";
+  live.className = `live-typing${typing ? " has-input" : ""}`;
   live.textContent = typing;
   card.append(avatar, name, role, hearts, lastWord, live);
   return card;

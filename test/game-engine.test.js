@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createLexicon } from "../src/lexicon.js";
-import { GameEngine } from "../src/game-engine.js";
+import { GameEngine, PREFERRED_FRAGMENTS } from "../src/game-engine.js";
 
 const lexicon = createLexicon([
   "palace", "palais", "palmeraie", "paladin", "palette", "palmier",
@@ -27,12 +27,18 @@ test("valide un mot accentué après normalisation et passe le tour", () => {
   const { engine } = makeEngine();
   assert.equal(engine.start().ok, true);
   const active = engine.activePlayerId;
-  const word = [...lexicon.byFragment.get(engine.sequence)].find((candidate) => candidate === "palais")
-    ?? [...lexicon.words][0];
-  const result = engine.submit(active, word === "palais" ? "PALaïs" : word);
+  const result = engine.submit(active, engine.lexicon.byFragment.get(engine.sequence)[0]);
   assert.equal(result.type, "valid");
   assert.equal(engine.players.get(active).lastWord.sequence, result.sequence);
   assert.notEqual(engine.activePlayerId, active);
+});
+
+test("ignore les accents pendant la validation", () => {
+  const { engine } = makeEngine();
+  engine.start();
+  const active = engine.activePlayerId;
+  engine.sequence = "ais";
+  assert.equal(engine.submit(active, "PALaïs").type, "valid");
 });
 
 test("refuse le doublon, un mot inconnu et une séquence absente", () => {
@@ -66,4 +72,11 @@ test("le réglage de difficulté est borné et les séquences ont des réponses 
   engine.start();
   assert.ok(engine.lexicon.byFragment.get(engine.sequence).some((word) => !engine.usedWords.has(word)));
   assert.equal(engine.snapshot().dictionarySize, lexicon.words.size);
+});
+
+test("ne tire que des fragments français faciles à lire", () => {
+  const { engine } = makeEngine();
+  engine.start();
+  assert.ok(PREFERRED_FRAGMENTS.includes(engine.sequence));
+  assert.ok(["ier", "par"].includes(engine.sequence) || engine.sequence.length === 3);
 });
