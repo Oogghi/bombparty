@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#24272a">
+    <title>Bomb Party · Français</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='%2324272a' stroke='%23f7c84b' stroke-width='5'/%3E%3Cpath d='M33 9c9-9 15 0 8 8' fill='none' stroke='%23f2788c' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='7' fill='%23f7c84b'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Retour à l'accueil"><span class="brand-bomb">✦</span><span>Bomb Party</span></a>
+        <div class="top-meta"><span class="top-chip">FRANÇAIS</span><span id="difficulty-chip" class="top-chip">STANDARD</span><button id="rules-button" class="ghost-button" type="button">Règles</button></div>
+      </header>
+
+      <main>
+        <section id="home-view" class="view active-view">
+          <div class="home-card">
+            <div class="hero-bomb" aria-hidden="true"><span>?</span></div>
+            <p class="eyebrow">JEU DE MOTS EN DIRECT</p>
+            <h1>La bombe cherche<br><em>un mot.</em></h1>
+            <p class="intro">Trouve la séquence, passe la bombe et garde tes vies. De 2 à 8 joueurs, dans le même salon.</p>
+            <form id="home-form" class="home-form">
+              <label for="nickname">Ton pseudo</label>
+              <input id="nickname" name="nickname" maxlength="18" autocomplete="nickname" placeholder="Ex. Camille" required>
+              <div class="home-actions">
+                <button class="primary-button" type="submit" data-action="create">Créer un salon <span>→</span></button>
+                <button class="secondary-button" type="submit" data-action="join">Rejoindre avec un code</button>
+              </div>
+              <label class="code-field" for="room-code">Code du salon <small>(si tu rejoins)</small></label>
+              <input id="room-code" name="room-code" maxlength="6" inputmode="text" autocomplete="off" placeholder="ABC123">
+              <p id="home-feedback" class="form-feedback" role="alert"></p>
+            </form>
+            <p class="lexicon-note"><span class="dot"></span> Lexique français local · parties synchronisées en temps réel</p>
+          </div>
+        </section>
+
+        <section id="lobby-view" class="view" hidden>
+          <div class="lobby-layout">
+            <div class="lobby-main panel">
+              <div class="section-kicker">SALON D'ATTENTE</div>
+              <div class="lobby-title-row"><div><h1 id="lobby-title">Salon</h1><p id="lobby-subtitle">En attente des joueurs…</p></div><div class="room-code-box"><span>CODE</span><strong id="room-code-label">------</strong><button id="copy-room" class="icon-button" type="button" title="Copier le lien">⧉</button></div></div>
+              <div id="lobby-players" class="lobby-players"></div>
+              <div class="lobby-footer"><p id="lobby-hint" class="muted">Il faut au moins deux joueurs pour lancer la partie.</p><button id="start-button" class="primary-button" type="button">Lancer la partie <span>→</span></button></div>
+            </div>
+            <aside class="settings-panel panel"><div class="section-kicker">RÉGLAGES DE LA PARTIE</div><label for="setting-lives">Vies par joueur</label><select id="setting-lives"><option value="1">1 vie</option><option value="2">2 vies</option><option value="3" selected>3 vies</option><option value="4">4 vies</option><option value="5">5 vies</option></select><label for="setting-time">Temps par tour</label><select id="setting-time"><option value="5">5 secondes</option><option value="8" selected>8 secondes</option><option value="10">10 secondes</option><option value="15">15 secondes</option></select><label for="setting-difficulty">Difficulté</label><select id="setting-difficulty"><option value="facile">Facile</option><option value="standard" selected>Standard</option><option value="expert">Expert</option></select><p class="settings-note">La difficulté choisit des séquences selon le nombre réel de réponses dans le lexique chargé.</p></aside>
+          </div>
+        </section>
+
+        <section id="game-view" class="view" hidden>
+          <div class="game-status-row"><div id="game-state-label" class="section-kicker">À TOI DE JOUER</div><div id="connection-label" class="connection-label"><span class="status-dot"></span> Connecté</div></div>
+          <div id="game-board" class="game-board">
+            <div id="players-ring" class="players-ring"></div>
+            <div id="turn-arrow" class="turn-arrow" aria-hidden="true"></div>
+            <div id="bomb-arena" class="bomb-arena">
+              <div id="bomb" class="bomb"><div class="bomb-fuse"></div><div class="bomb-face"><div class="bomb-label">TROUVE</div><div id="sequence" class="sequence">--</div><div id="answer-count" class="answer-count">Séquence en préparation</div></div></div>
+              <div class="timer-track"><div id="timer-progress" class="timer-progress"></div></div><div id="timer-text" class="timer-text">--</div>
+              <p id="turn-message" class="turn-message">La bombe circule…</p>
+              <form id="word-form" class="word-form"><label class="sr-only" for="word-input">Ton mot</label><input id="word-input" maxlength="48" autocomplete="off" placeholder="Écris un mot…" disabled><button type="submit" aria-label="Valider le mot">↵</button></form>
+              <p id="word-feedback" class="word-feedback" role="status"></p>
+            </div>
+          </div>
+          <div class="game-legend"><span><i class="legend-fragment"></i> fragment trouvé</span><span><i class="legend-live"></i> saisie en cours visible par tous</span><span id="used-count">0 mot utilisé</span></div>
+        </section>
+
+        <section id="finished-view" class="view" hidden>
+          <div class="finish-card panel"><div class="finish-burst" aria-hidden="true">✦</div><div class="section-kicker">PARTIE TERMINÉE</div><h1 id="winner-title">Victoire !</h1><p id="winner-subtitle">La bombe a trouvé son maître.</p><div id="final-scoreboard" class="final-scoreboard"></div><button id="play-again" class="primary-button" type="button">Rejouer <span>↻</span></button><p id="replay-hint" class="muted"></p></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="rules-dialog" class="rules-dialog"><button id="close-rules" class="dialog-close" type="button" aria-label="Fermer">×</button><div class="section-kicker">COMMENT JOUER</div><h2>Fais passer la bombe.</h2><p>Une séquence de lettres apparaît au centre. À ton tour, tape un mot français qui la contient, à n’importe quel endroit.</p><div class="rules-grid"><div><strong>01</strong><span>Un mot valide passe immédiatement la bombe au joueur suivant.</span></div><div><strong>02</strong><span>Un mot inconnu, déjà utilisé ou sans séquence peut être retenté.</span></div><div><strong>03</strong><span>À la fin du chrono, tu perds une vie. À zéro, tu regardes la suite.</span></div></div><p class="muted">Les accents et la casse ne comptent pas. Le serveur vérifie chaque proposition.</p></dialog>
+    <div id="toast" class="toast" role="status"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

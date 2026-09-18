@@ -1,0 +1,15 @@
+{
+  "name": "bomb-party-fr",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jeu de mots français multijoueur en temps réel",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "an-array-of-french-words": "^2.0.0",
+    "ws": "^8.18.3"
+  }
+}
